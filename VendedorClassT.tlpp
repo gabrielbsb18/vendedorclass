@@ -1,0 +1,267 @@
+#include "totvs.ch"
+
+/*/{Protheus.doc} VendedorClass
+Classe para manipulação de dados da tabela de vendedores
+@since 17/07/2024
+@version 1.0
+Gabriel Dantas
+/*/
+
+class VendedorClass
+    public data OPC_INC     as numeric
+    public data OPC_ALT     as numeric
+    public data OPC_EXC     as numeric
+    
+    public data cError      as character
+    public data nOpc        as numeric
+
+    private data cFilialVendedor      as character
+    private data cCodigoVendedor      as character
+    public data cNomeVendedor         as character
+    private data cCodigoSupervisor    as character
+    private data cNomeSupervisor      as character
+    private data cCodigoGerente       as character
+    private data cNomeGerente         as character
+    private data cDddVendedor         as character
+    private data cTelefoneVendedor    as character
+    private data cEmailVendedor       as character
+    private data cDddSupervisor       as character
+    private data cTelefoneSupervisor  as character
+    private data cEmailSupervisor     as character
+    private data cDddGerente          as character
+    private data cTelefoneGerente     as character
+    private data cEmailGerente        as character
+    
+    public method new() constructor
+    public method getID(cCodigoVendedor, cFilialVendedor) constructor
+    public method setDadosVendedor()
+    public method create(cCodigoVendedor, cFilialVendedor)
+    public method update(cCodigoVendedor, cFilialVendedor)
+    public method delete(cCodigoVendedor, cFilialVendedor)
+    public method setDadosAuto()
+    public method execAuto()
+
+endclass
+
+/*/{Protheus.doc} VendedorClass:new
+Inicializa uma nova instância da classe VendedorClass
+@since 17/07/2024
+Gabriel Dantas
+/*/
+
+method new() class VendedorClass
+    ::cError            := ""
+
+    ::cFilialVendedor   := ""
+    ::cCodigoVendedor   := ""
+    ::cNomeVendedor     := ""
+    ::cCodigoSupervisor := ""
+    ::cNomeSupervisor   := ""
+    ::cCodigoGerente    := ""
+    ::cNomeGerente      := ""
+return 
+
+/*/{Protheus.doc} VendedorClass:create
+Cria um novo registro de vendedor
+@param cCodigoVendedor Código do vendedor
+@param cFilialVendedor Filial do vendedor
+@since 17/07/2024
+Gabriel Dantas
+/*/
+
+method create(cCodigoVendedor, cFilialVendedor) class VendedorClass
+    default cCodigoVendedor := ""
+    default cFilialVendedor := xFilial("SA3")
+
+    if (!empty(cCodigoVendedor))
+        // Seleciona a área de trabalho existente
+        dbSelectArea("SA3")
+        SA3->(dbSetOrder(1))
+        
+        // Verifica se o vendedor já existe
+        if (!SA3->(dbSeek(padr(cFilialVendedor, tamsx3("A3_FILIAL")[1]) + padr(cCodigoVendedor, tamsx3("A3_COD")[1]))))
+            ::cCodigoVendedor := cCodigoVendedor
+            ::cFilialVendedor := cFilialVendedor
+            
+            // Define os dados do vendedor
+            ::cNomeVendedor := "Nome do Vendedor"
+            ::cCodigoSupervisor := "Supervisor"
+            ::cCodigoGerente := "Gerente"
+            ::cDddVendedor := "DDD"
+            ::cTelefoneVendedor := "Telefone"
+            ::cEmailVendedor := "Email"
+            
+            // Adiciona o novo registro
+            dbAppend()
+            SA3->A3_FILIAL := ::cFilialVendedor
+            SA3->A3_COD := ::cCodigoVendedor
+            SA3->A3_NOME := ::cNomeVendedor
+            SA3->A3_SUPER := ::cCodigoSupervisor
+            SA3->A3_GEREN := ::cCodigoGerente
+            SA3->A3_DDDTEL := ::cDddVendedor
+            SA3->A3_TEL := ::cTelefoneVendedor
+            SA3->A3_EMAIL := ::cEmailVendedor
+            
+            // Salva as alterações
+            dbCommit()
+        else
+            ::cError := "Vendedor já existe."
+        endif
+    else
+        ::cError := "Código do vendedor não pode ser vazio."
+    endif
+return
+
+/*/{Protheus.doc} VendedorClass:getID
+Obtém os dados de um vendedor pelo código
+@param cCodigoVendedor Código do vendedor
+@param cFilialVendedor Filial do vendedor
+@return Nome do vendedor
+@since 17/07/2024
+Gabriel Dantas
+/*/
+
+method getID(cCodigoVendedor, cFilialVendedor) class VendedorClass
+    default cCodigoVendedor := ""
+    default cFilialVendedor := xFilial("SA3")
+
+    if (!empty(cCodigoVendedor))
+        dbSelectArea("SA3")
+        SA3->(dbSetOrder(1))
+        if (SA3->(dbSeek(padr(cFilialVendedor, tamsx3("A3_FILIAL")[1]) + padr(cCodigoVendedor, tamsx3("A3_COD")[1]))))
+            ::setDadosVendedor()
+        else
+            ::cError := "Vendedor não encontrado."
+        endif
+    else
+        ::cError := "Código do vendedor não pode ser vazio."
+    endif
+return ::cNomeVendedor
+
+/*/{Protheus.doc} VendedorClass:setDadosVendedor
+Define os dados do vendedor na instância da classe
+@since 17/07/2024
+Gabriel Dantas
+/*/
+
+method setDadosVendedor() class VendedorClass
+    ::cFilialVendedor    := SA3->A3_FILIAL
+    ::cCodigoVendedor    := SA3->A3_COD
+    ::cNomeVendedor      := SA3->A3_NOME
+    ::cCodigoSupervisor  := SA3->A3_SUPER
+    ::cCodigoGerente     := SA3->A3_GEREN
+    ::cDddVendedor       := SA3->A3_DDDTEL
+    ::cTelefoneVendedor  := SA3->A3_TEL
+    ::cEmailVendedor     := SA3->A3_EMAIL
+    
+    if (SA3->(DbSeek(Padr(::cFilialVendedor, Tamsx3("A3_FILIAL")[1]) + Padr(::cCodigoSupervisor, Tamsx3("A3_COD")[1]))))
+        ::cNomeSupervisor       := SA3->A3_NOME
+        ::cDddSupervisor        := SA3->A3_DDDTEL
+        ::cTelefoneSupervisor   := SA3->A3_TEL
+        ::cEmailSupervisor      := SA3->A3_EMAIL
+    endif
+    
+    if (!Empty(::cCodigoGerente))
+        if (SA3->(DbSeek(Padr(::cFilialVendedor, Tamsx3("A3_FILIAL")[1]) + Padr(::cCodigoGerente, Tamsx3("A3_COD")[1]))))
+            ::cNomeGerente      := SA3->A3_NOME
+            ::cDddGerente       := SA3->A3_DDDTEL
+            ::cTelefoneGerente  := SA3->A3_TEL
+            ::cEmailGerente     := SA3->A3_EMAIL
+        endif
+    endif
+return
+
+/*/{Protheus.doc} VendedorClass:update
+Atualiza os dados de um vendedor existente
+@param cCodigoVendedor Código do vendedor
+@param cFilialVendedor Filial do vendedor
+@since 17/07/2024
+Gabriel Dantas
+/*/
+
+method update(cCodigoVendedor, cFilialVendedor) class VendedorClass
+    default cCodigoVendedor := ""
+    default cFilialVendedor := xFilial("SA3")
+
+    if (!empty(cCodigoVendedor))
+        dbSelectArea("SA3")
+        SA3->(dbSetOrder(1))
+        if (SA3->(dbSeek(padr(cFilialVendedor, tamsx3("A3_FILIAL")[1]) + padr(cCodigoVendedor, tamsx3("A3_COD")[1]))))
+            ::setDadosVendedor()
+        else
+            ::cError := "Vendedor não encontrado."
+        endif
+    else
+        ::cError := "Código do vendedor não pode ser vazio."
+    endif
+
+    if (empty(::cError))
+        ::nOpc := OPC_ALT
+        ::setDadosAuto()
+        ::execAuto()
+    endif
+return
+
+/*/{Protheus.doc} VendedorClass:delete
+Deleta um vendedor existente
+@param cCodigoVendedor Código do vendedor
+@param cFilialVendedor Filial do vendedor
+@since 17/07/2024
+Gabriel Dantas
+/*/
+
+method delete(cCodigoVendedor, cFilialVendedor) class VendedorClass
+    default cCodigoVendedor := ""
+    default cFilialVendedor := xFilial("SA3")
+
+    if (!empty(cCodigoVendedor))
+        dbSelectArea("SA3")
+        SA3->(dbSetOrder(1))
+        if (SA3->(dbSeek(padr(cFilialVendedor, tamsx3("A3_FILIAL")[1]) + padr(cCodigoVendedor, tamsx3("A3_COD")[1]))))
+            ::setDadosVendedor()
+        else
+            ::cError := "Vendedor não encontrado."
+        endif
+    else
+        ::cError := "Código do vendedor não pode ser vazio."
+    endif
+
+    if (empty(::cError))
+        ::nOpc := OPC_EXC
+        ::setDadosAuto()
+        ::execAuto()
+    endif
+return
+
+
+/*/{Protheus.doc} VendedorClass:setDadosAuto
+Define automaticamente os dados do vendedor
+@since 17/07/2024
+Gabriel Dantas
+/*/
+
+method setDadosAuto() class VendedorClass
+    // Implementação da lógica para definir os dados automaticamente
+return
+
+
+
+/*/{Protheus.doc} VendedorClass:execAuto
+Executa operações automáticas baseadas na opção selecionada
+@since 17/07/2024
+Gabriel Dantas
+/*/
+
+method execAuto() class VendedorClass
+    // Implementação da lógica para executar operações automáticas
+    if (::nOpc == OPC_INC)
+        dbAppend()
+        // Código para adicionar o registro
+    elseif (::nOpc == OPC_ALT)
+        dbCommit()
+        // Código para atualizar o registro
+    elseif (::nOpc == OPC_EXC)
+        dbDelete()
+        // Código para deletar o registro
+    endif
+return
