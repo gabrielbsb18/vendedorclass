@@ -223,27 +223,22 @@ Deleta um vendedor existente
 Gabriel Dantas
 /*/
 
-method delete(cCodigoVendedor, cFilialVendedor) class VendedorClass
-    default cCodigoVendedor := ""
-    default cFilialVendedor := xFilial("SA3")
-
-    if (!empty(cCodigoVendedor))
-        dbSelectArea("SA3")
-        SA3->(dbSetOrder(1))
-        if (SA3->(dbSeek(padr(cFilialVendedor, tamsx3("A3_FILIAL")[1]) + padr(cCodigoVendedor, tamsx3("A3_COD")[1]))))
-            ::setDadosVendedor()
+method delete(cCodVendedor, cFilialVendedor) class VendedorClass
+        // ImplementaÁ„o do mÈtodo delete
+        USE SA3 NEW
+        DELETE
+        INDEX ON cCodVendedor + cFilialVendedor TO "IDX_VENDEDOR"
+        if FOUND()
+            DELETE
+            if !RECNO()
+                cError := "Erro: Registro n„o encontrado."
+            else
+                cError := ""
+            endif
         else
-            ::cError := "Vendedor nùo encontrado."
+            cError := "Erro ao deletar: " + LASTERR()
         endif
-    else
-        ::cError := "Cùdigo do vendedor nùo pode ser vazio."
-    endif
 
-    if (empty(::cError))
-        ::nOpc := OPC_EXC
-        ::setDadosAuto()
-        ::execAuto()
-    endif
 return
 
 

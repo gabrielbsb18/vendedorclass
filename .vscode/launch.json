@@ -23,15 +23,15 @@
 			"label": ""
 		},
 		{
-			"label": "u_TstVendedor3"
+			"label": "u_TstVendedor"
 		},
 		{
 			"label": "]"
 		},
 		{
-			"label": "u_TstVendedor3"
+			"label": "u_TstVendedor"
 		}
 	],
-	"lastProgramExecuted": "u_TstVendedor3",
+	"lastProgramExecuted": "u_TstVendedor",
 	"lastProgramArguments": []
 }

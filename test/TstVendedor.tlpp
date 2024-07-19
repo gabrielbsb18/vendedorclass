@@ -24,7 +24,7 @@ Function U_TstVendedor
 
         // Testa o método delete
         u_TstDeleteVendedor()
-        
+
 	RESET ENVIRONMENT
 
 Return
@@ -35,19 +35,19 @@ Return
     // Testando o método create()
     oVendedor:create("0007", "01")
 
-    If oVendedor:cError != ""
+    if oVendedor:cError != ""
         Conout("Erro ao criar vendedor: " + oVendedor:cError + CRLF)
         Return
-    EndIf
+    endIf
 
     Conout("Vendedor criado com sucesso!" + CRLF)
 
     // Verifica se o registro foi realmente criado
     dbGoTop()
-    If !SA3->(dbSeek("01" + "0007"))
+    if !SA3->(dbSeek("01" + "0007"))
         Conout("Erro: Vendedor não foi encontrado na base de dados." + CRLF)
         Return
-    EndIf
+    endIf
 
     Conout("Vendedor encontrado na base de dados com sucesso!" + CRLF)
 return
@@ -120,8 +120,16 @@ Função para testar o método delete da classe VendedorClass
 Function u_TstDeleteVendedor
     local oVendedor := VendedorClass():new()
 
+        // Cria um vendedor para testar o método delete
+    oVendedor:create("0006", "01")
+
+    If oVendedor:cError != ""
+        Conout("Erro ao criar vendedor para teste: " + oVendedor:cError + CRLF)
+        Return
+    EndIf
+
     // Deleta o vendedor
-    oVendedor:delete("0004", "01")
+    oVendedor:delete("0006", "01")
 
     If oVendedor:cError != ""
         Conout("Erro ao deletar vendedor: " + oVendedor:cError + CRLF)
@@ -132,7 +140,7 @@ Function u_TstDeleteVendedor
     
     // Verifica se o registro foi realmente deletado
     dbGoTop()
-    If SA3->(dbSeek("01" + "0006"))
+    If SA3->(dbSeek("01" + "0007"))
         Conout("Erro: Vendedor ainda encontrado na base de dados." + CRLF)
         Return
     EndIf
