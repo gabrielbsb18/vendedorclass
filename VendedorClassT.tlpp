@@ -17,7 +17,7 @@ class VendedorClass
 
     private data cFilialVendedor      as character
     private data cCodigoVendedor      as character
-    public data cNomeVendedor         as character
+    private data cNomeVendedor         as character
     private data cCodigoSupervisor    as character
     private data cNomeSupervisor      as character
     private data cCodigoGerente       as character
