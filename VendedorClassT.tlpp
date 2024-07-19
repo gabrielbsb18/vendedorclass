@@ -233,19 +233,6 @@ method delete(cCodigoVendedor, cFilialVendedor) class VendedorClass
     endif
 return
 
-
-/*/{Protheus.doc} VendedorClass:setDadosAuto
-Define automaticamente os dados do vendedor
-@since 17/07/2024
-Gabriel Dantas
-/*/
-
-method setDadosAuto() class VendedorClass
-    // Implementação da lógica para definir os dados automaticamente
-return
-
-
-
 /*/{Protheus.doc} VendedorClass:execAuto
 Executa operações automáticas baseadas na opção selecionada
 @since 17/07/2024

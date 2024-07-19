@@ -8,34 +8,17 @@ Rotina para testar a classe VendedorClass
 @since 17/07/2024
 @version 1.0
 /*/
-Function u_TstVendedor3()
+Function u_TstVendedor3
 
+    // Declaração de variáveis locais
     Local oVendedor := VendedorClass():new()
-    RpcSetEnv('99', '01')
+    Local cCodVendedor := "0001"
+    Local cFilialVendedor := "99"
+
+
+    // Testando o método create()
+    oVendedor:create(cCodVendedor, cFilialVendedor)
     
 
-    // Testar método new()
-    fwalertInfo("Testando método new() da classe VendedorClass...")
-    fwalertInfo("Nome do vendedor inicial: " + oVendedor:cNomeVendedor)
-
-    // Testar método getID() e setDadosVendedor()
-    fwalertInfo("Testando método getID() e setDadosVendedor() da classe VendedorClass...")
-    oVendedor:getID("0001", "01")
-    oVendedor:setDadosVendedor() // Carrega os dados do vendedor
-    fwalertInfo("Nome do vendedor após buscar por ID: " + oVendedor:cNomeVendedor)
-
-    // Testar método create()
-    fwalertInfo("Testando método create() da classe VendedorClass...")
-    oVendedor:create("0001", "01")  // Exemplo de criação com código e filial
-
-    // Testar método update()
-    fwalertInfo("Testando método update() da classe VendedorClass...")
-    oVendedor:update("0001", "01")  // Exemplo de atualização com código e filial
-
-    // Testar método delete()
-    fwalertInfo("Testando método delete() da classe VendedorClass...")
-    oVendedor:delete("0001", "01")  // Exemplo de exclusão com código e filial
-
-    RpcClearEnv()
 
 Return
