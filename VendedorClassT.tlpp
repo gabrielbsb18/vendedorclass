@@ -17,7 +17,7 @@ class VendedorClass
 
     private data cFilialVendedor      as character
     private data cCodigoVendedor      as character
-    public data cNomeVendedor         as character
+    private data cNomeVendedor         as character
     private data cCodigoSupervisor    as character
     private data cNomeSupervisor      as character
     private data cCodigoGerente       as character
@@ -97,7 +97,7 @@ method create(cCodigoVendedor, cFilialVendedor) class VendedorClass
             // Define os dados do vendedor
             ::cCodigoVendedor := cCodigoVendedor
             ::cFilialVendedor := cFilialVendedor
-            ::cNomeVendedor := "Gabriel"  // Ajuste conforme necessário
+            ::cNomeVendedor := "Vendedor criado com sucesso"  // Ajuste conforme necessário
             ::cCodigoSupervisor := "Supervisor"  // Ajuste conforme necessário
             ::cCodigoGerente := "Gerente"  // Ajuste conforme necessário
             ::cDddVendedor := "DDD"  // Ajuste conforme necessário

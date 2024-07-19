@@ -8,50 +8,134 @@ Rotina para testar a classe VendedorClass
 @since 17/07/2024
 @version 1.0
 /*/
-Function u_TstVendedor3
+Function U_TstVendedor
 
-
-
-    // Declaração de variáveis locais
-    Local oVendedor := VendedorClass():new()
-    Local cCodVendedor := "0003"
-    Local cFilialVendedor := "01"
-//-----------------------------------------------------------------------
     	RPCSetType(3)
 	PREPARE ENVIRONMENT EMPRESA "99" FILIAL "01"
+  
+        // Testa o método create
+        u_tstCreateVendedor()
 
+        // Testa o método setDadosVendedor
+        u_TstSetDadosVendedor()
+
+        // Testa o método update
+        u_TstUpdateVendedor()
+
+        // Testa o método delete
+        u_TstDeleteVendedor()
+        
 	RESET ENVIRONMENT
-//------------------------------------------------------------------------
+
+Return
     // Testando o método create()
-    oVendedor:create(cCodVendedor, cFilialVendedor)
+    Function u_tstCreateVendedor
+    local oVendedor := VendedorClass():new()
+
+    // Testando o método create()
+    oVendedor:create("0007", "01")
+
     If oVendedor:cError != ""
         Conout("Erro ao criar vendedor: " + oVendedor:cError + CRLF)
         Return
     EndIf
+
     Conout("Vendedor criado com sucesso!" + CRLF)
 
-    // Testando o método setDadosVendedor()
+    // Verifica se o registro foi realmente criado
+    dbGoTop()
+    If !SA3->(dbSeek("01" + "0007"))
+        Conout("Erro: Vendedor não foi encontrado na base de dados." + CRLF)
+        Return
+    EndIf
+
+    Conout("Vendedor encontrado na base de dados com sucesso!" + CRLF)
+return
+
+/*/{Protheus.doc} u_TstSetDadosVendedor
+Função para testar o método setDadosVendedor da classe VendedorClass
+
+@author Gabriel Dantas
+@since 19/07/2024
+@version 1.0
+/*/
+Function u_TstSetDadosVendedor
+    local oVendedor := VendedorClass():new()
+
+    // Cria um vendedor para testar o método setDadosVendedor
+    oVendedor:create("0004", "01")
+
+    If oVendedor:cError != ""
+        Conout("Erro ao criar vendedor para teste: " + oVendedor:cError + CRLF)
+        Return
+    EndIf
+
+    // Testa o método setDadosVendedor
     oVendedor:setDadosVendedor()
+
     If oVendedor:cError != ""
         Conout("Erro ao configurar dados do vendedor: " + oVendedor:cError + CRLF)
         Return
     EndIf
-    Conout("Dados do vendedor configurados com sucesso!" + CRLF)
 
-    // Testando o método update()
-    oVendedor:update(cCodVendedor, cFilialVendedor)
+    Conout("Dados do vendedor configurados com sucesso!" + CRLF)
+return
+
+/*/{Protheus.doc} u_TstUpdateVendedor
+Função para testar o método update da classe VendedorClass
+
+@author Gabriel Dantas
+@since 19/07/2024
+@version 1.0
+/*/
+Function u_TstUpdateVendedor
+    local oVendedor := VendedorClass():new()
+
+    // Cria um vendedor para testar o método update
+    oVendedor:create("0005", "01")
+
+    If oVendedor:cError != ""
+        Conout("Erro ao criar vendedor para teste: " + oVendedor:cError + CRLF)
+        Return
+    EndIf
+
+    // Atualiza os dados do vendedor
+    oVendedor:update("0006", "01")
+
     If oVendedor:cError != ""
         Conout("Erro ao atualizar vendedor: " + oVendedor:cError + CRLF)
         Return
     EndIf
-    Conout("Vendedor atualizado com sucesso!" + CRLF)
 
-    // Testando o método delete()
-    oVendedor:delete(cCodVendedor, cFilialVendedor)
+    Conout("Vendedor atualizado com sucesso!" + CRLF)
+return
+
+/*/{Protheus.doc} u_TstDeleteVendedor
+Função para testar o método delete da classe VendedorClass
+
+@author Gabriel Dantas
+@since 19/07/2024
+@version 1.0
+/*/
+Function u_TstDeleteVendedor
+    local oVendedor := VendedorClass():new()
+
+    // Deleta o vendedor
+    oVendedor:delete("0004", "01")
+
     If oVendedor:cError != ""
         Conout("Erro ao deletar vendedor: " + oVendedor:cError + CRLF)
         Return
     EndIf
-    Conout("Vendedor deletado com sucesso!" + CRLF)
 
-Return
+    Conout("Vendedor deletado com sucesso!" + CRLF)
+    
+    // Verifica se o registro foi realmente deletado
+    dbGoTop()
+    If SA3->(dbSeek("01" + "0006"))
+        Conout("Erro: Vendedor ainda encontrado na base de dados." + CRLF)
+        Return
+    EndIf
+
+    Conout("Vendedor não encontrado na base de dados, exclusão confirmada!" + CRLF)
+return
