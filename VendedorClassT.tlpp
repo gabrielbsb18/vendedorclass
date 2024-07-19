@@ -1,7 +1,7 @@
 #include "totvs.ch"
 
 /*/{Protheus.doc} VendedorClass
-Classe para manipulaÁ„o de dados da tabela de vendedores
+Classe para manipulaùùo de dados da tabela de vendedores
 @since 17/07/2024
 @version 1.0
 Gabriel Dantas
@@ -11,13 +11,13 @@ class VendedorClass
     public data OPC_INC     as numeric
     public data OPC_ALT     as numeric
     public data OPC_EXC     as numeric
-    
+
     public data cError      as character
     public data nOpc        as numeric
 
     private data cFilialVendedor      as character
     private data cCodigoVendedor      as character
-    private data cNomeVendedor         as character
+    public data cNomeVendedor         as character
     private data cCodigoSupervisor    as character
     private data cNomeSupervisor      as character
     private data cCodigoGerente       as character
@@ -31,7 +31,7 @@ class VendedorClass
     private data cDddGerente          as character
     private data cTelefoneGerente     as character
     private data cEmailGerente        as character
-    
+
     public method new() constructor
     public method getID(cCodigoVendedor, cFilialVendedor) constructor
     public method setDadosVendedor()
@@ -40,11 +40,12 @@ class VendedorClass
     public method delete(cCodigoVendedor, cFilialVendedor)
     public method setDadosAuto()
     public method execAuto()
+    public method openTable()
 
 endclass
 
 /*/{Protheus.doc} VendedorClass:new
-Inicializa uma nova inst‚ncia da classe VendedorClass
+Inicializa uma nova instùncia da classe VendedorClass
 @since 17/07/2024
 Gabriel Dantas
 /*/
@@ -61,9 +62,16 @@ method new() class VendedorClass
     ::cNomeGerente      := ""
 return 
 
+// MÈtodo para abrir a tabela SA3
+method openTable() class VendedorClass
+    if (!dbSelectArea("SA3"))
+        dbUseArea(.T., "SA3", "SA3", .T., .F.)
+    endif
+return
+
 /*/{Protheus.doc} VendedorClass:create
 Cria um novo registro de vendedor
-@param cCodigoVendedor CÛdigo do vendedor
+@param cCodigoVendedor Cùdigo do vendedor
 @param cFilialVendedor Filial do vendedor
 @since 17/07/2024
 Gabriel Dantas
@@ -71,26 +79,31 @@ Gabriel Dantas
 
 method create(cCodigoVendedor, cFilialVendedor) class VendedorClass
     default cCodigoVendedor := ""
-    default cFilialVendedor := xFilial("SA3")
+    default cFilialVendedor := xFilial("01")
+
+    ::cError := ""
 
     if (!empty(cCodigoVendedor))
         // Seleciona a ·rea de trabalho existente
-        dbSelectArea("SA3")
+        if (dbSelectArea("SA3") == 0)
+            // Se o alias SA3 n„o estiver disponÌvel, usa dbUseArea para definir o alias
+            dbUseArea(.T., "SA3", "SA3", .T., .F.)
+        endif
+
         SA3->(dbSetOrder(1))
-        
+
         // Verifica se o vendedor j· existe
         if (!SA3->(dbSeek(padr(cFilialVendedor, tamsx3("A3_FILIAL")[1]) + padr(cCodigoVendedor, tamsx3("A3_COD")[1]))))
+            // Define os dados do vendedor
             ::cCodigoVendedor := cCodigoVendedor
             ::cFilialVendedor := cFilialVendedor
-            
-            // Define os dados do vendedor
-            ::cNomeVendedor := "Nome do Vendedor"
-            ::cCodigoSupervisor := "Supervisor"
-            ::cCodigoGerente := "Gerente"
-            ::cDddVendedor := "DDD"
-            ::cTelefoneVendedor := "Telefone"
-            ::cEmailVendedor := "Email"
-            
+            ::cNomeVendedor := "Gabriel"  // Ajuste conforme necess·rio
+            ::cCodigoSupervisor := "Supervisor"  // Ajuste conforme necess·rio
+            ::cCodigoGerente := "Gerente"  // Ajuste conforme necess·rio
+            ::cDddVendedor := "DDD"  // Ajuste conforme necess·rio
+            ::cTelefoneVendedor := "Telefone"  // Ajuste conforme necess·rio
+            ::cEmailVendedor := "Email"  // Ajuste conforme necess·rio
+
             // Adiciona o novo registro
             dbAppend()
             SA3->A3_FILIAL := ::cFilialVendedor
@@ -101,7 +114,7 @@ method create(cCodigoVendedor, cFilialVendedor) class VendedorClass
             SA3->A3_DDDTEL := ::cDddVendedor
             SA3->A3_TEL := ::cTelefoneVendedor
             SA3->A3_EMAIL := ::cEmailVendedor
-            
+
             // Salva as alteraÁıes
             dbCommit()
         else
@@ -113,8 +126,8 @@ method create(cCodigoVendedor, cFilialVendedor) class VendedorClass
 return
 
 /*/{Protheus.doc} VendedorClass:getID
-ObtÈm os dados de um vendedor pelo cÛdigo
-@param cCodigoVendedor CÛdigo do vendedor
+Obtùm os dados de um vendedor pelo cùdigo
+@param cCodigoVendedor Cùdigo do vendedor
 @param cFilialVendedor Filial do vendedor
 @return Nome do vendedor
 @since 17/07/2024
@@ -131,15 +144,15 @@ method getID(cCodigoVendedor, cFilialVendedor) class VendedorClass
         if (SA3->(dbSeek(padr(cFilialVendedor, tamsx3("A3_FILIAL")[1]) + padr(cCodigoVendedor, tamsx3("A3_COD")[1]))))
             ::setDadosVendedor()
         else
-            ::cError := "Vendedor n„o encontrado."
+            ::cError := "Vendedor nùo encontrado."
         endif
     else
-        ::cError := "CÛdigo do vendedor n„o pode ser vazio."
+        ::cError := "Cùdigo do vendedor nùo pode ser vazio."
     endif
 return ::cNomeVendedor
 
 /*/{Protheus.doc} VendedorClass:setDadosVendedor
-Define os dados do vendedor na inst‚ncia da classe
+Define os dados do vendedor na instùncia da classe
 @since 17/07/2024
 Gabriel Dantas
 /*/
@@ -153,14 +166,14 @@ method setDadosVendedor() class VendedorClass
     ::cDddVendedor       := SA3->A3_DDDTEL
     ::cTelefoneVendedor  := SA3->A3_TEL
     ::cEmailVendedor     := SA3->A3_EMAIL
-    
+
     if (SA3->(DbSeek(Padr(::cFilialVendedor, Tamsx3("A3_FILIAL")[1]) + Padr(::cCodigoSupervisor, Tamsx3("A3_COD")[1]))))
         ::cNomeSupervisor       := SA3->A3_NOME
         ::cDddSupervisor        := SA3->A3_DDDTEL
         ::cTelefoneSupervisor   := SA3->A3_TEL
         ::cEmailSupervisor      := SA3->A3_EMAIL
     endif
-    
+
     if (!Empty(::cCodigoGerente))
         if (SA3->(DbSeek(Padr(::cFilialVendedor, Tamsx3("A3_FILIAL")[1]) + Padr(::cCodigoGerente, Tamsx3("A3_COD")[1]))))
             ::cNomeGerente      := SA3->A3_NOME
@@ -173,7 +186,7 @@ return
 
 /*/{Protheus.doc} VendedorClass:update
 Atualiza os dados de um vendedor existente
-@param cCodigoVendedor CÛdigo do vendedor
+@param cCodigoVendedor Cùdigo do vendedor
 @param cFilialVendedor Filial do vendedor
 @since 17/07/2024
 Gabriel Dantas
@@ -189,10 +202,10 @@ method update(cCodigoVendedor, cFilialVendedor) class VendedorClass
         if (SA3->(dbSeek(padr(cFilialVendedor, tamsx3("A3_FILIAL")[1]) + padr(cCodigoVendedor, tamsx3("A3_COD")[1]))))
             ::setDadosVendedor()
         else
-            ::cError := "Vendedor n„o encontrado."
+            ::cError := "Vendedor nùo encontrado."
         endif
     else
-        ::cError := "CÛdigo do vendedor n„o pode ser vazio."
+        ::cError := "Cùdigo do vendedor nùo pode ser vazio."
     endif
 
     if (empty(::cError))
@@ -204,7 +217,7 @@ return
 
 /*/{Protheus.doc} VendedorClass:delete
 Deleta um vendedor existente
-@param cCodigoVendedor CÛdigo do vendedor
+@param cCodigoVendedor Cùdigo do vendedor
 @param cFilialVendedor Filial do vendedor
 @since 17/07/2024
 Gabriel Dantas
@@ -220,10 +233,10 @@ method delete(cCodigoVendedor, cFilialVendedor) class VendedorClass
         if (SA3->(dbSeek(padr(cFilialVendedor, tamsx3("A3_FILIAL")[1]) + padr(cCodigoVendedor, tamsx3("A3_COD")[1]))))
             ::setDadosVendedor()
         else
-            ::cError := "Vendedor n„o encontrado."
+            ::cError := "Vendedor nùo encontrado."
         endif
     else
-        ::cError := "CÛdigo do vendedor n„o pode ser vazio."
+        ::cError := "Cùdigo do vendedor nùo pode ser vazio."
     endif
 
     if (empty(::cError))
@@ -233,22 +246,24 @@ method delete(cCodigoVendedor, cFilialVendedor) class VendedorClass
     endif
 return
 
+
+
 /*/{Protheus.doc} VendedorClass:execAuto
-Executa operaÁıes autom·ticas baseadas na opÁ„o selecionada
+Executa operaùùes automùticas baseadas na opùùo selecionada
 @since 17/07/2024
 Gabriel Dantas
 /*/
 
 method execAuto() class VendedorClass
-    // ImplementaÁ„o da lÛgica para executar operaÁıes autom·ticas
+    // Implementaùùo da lùgica para executar operaùùes automùticas
     if (::nOpc == OPC_INC)
         dbAppend()
-        // CÛdigo para adicionar o registro
+        // Cùdigo para adicionar o registro
     elseif (::nOpc == OPC_ALT)
         dbCommit()
-        // CÛdigo para atualizar o registro
+        // Cùdigo para atualizar o registro
     elseif (::nOpc == OPC_EXC)
         dbDelete()
-        // CÛdigo para deletar o registro
+        // Cùdigo para deletar o registro
     endif
 return

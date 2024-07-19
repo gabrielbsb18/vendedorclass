@@ -27,7 +27,11 @@
 		},
 		{
 			"label": "]"
+		},
+		{
+			"label": "u_TstVendedor3"
 		}
 	],
-	"lastProgramExecuted": "u_TstVendedor3"
+	"lastProgramExecuted": "u_TstVendedor3",
+	"lastProgramArguments": []
 }

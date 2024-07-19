@@ -10,15 +10,48 @@ Rotina para testar a classe VendedorClass
 /*/
 Function u_TstVendedor3
 
+
+
     // Declaração de variáveis locais
     Local oVendedor := VendedorClass():new()
-    Local cCodVendedor := "0001"
-    Local cFilialVendedor := "99"
+    Local cCodVendedor := "0003"
+    Local cFilialVendedor := "01"
+//-----------------------------------------------------------------------
+    	RPCSetType(3)
+	PREPARE ENVIRONMENT EMPRESA "99" FILIAL "01"
 
-
+	RESET ENVIRONMENT
+//------------------------------------------------------------------------
     // Testando o método create()
     oVendedor:create(cCodVendedor, cFilialVendedor)
-    
+    If oVendedor:cError != ""
+        Conout("Erro ao criar vendedor: " + oVendedor:cError + CRLF)
+        Return
+    EndIf
+    Conout("Vendedor criado com sucesso!" + CRLF)
 
+    // Testando o método setDadosVendedor()
+    oVendedor:setDadosVendedor()
+    If oVendedor:cError != ""
+        Conout("Erro ao configurar dados do vendedor: " + oVendedor:cError + CRLF)
+        Return
+    EndIf
+    Conout("Dados do vendedor configurados com sucesso!" + CRLF)
+
+    // Testando o método update()
+    oVendedor:update(cCodVendedor, cFilialVendedor)
+    If oVendedor:cError != ""
+        Conout("Erro ao atualizar vendedor: " + oVendedor:cError + CRLF)
+        Return
+    EndIf
+    Conout("Vendedor atualizado com sucesso!" + CRLF)
+
+    // Testando o método delete()
+    oVendedor:delete(cCodVendedor, cFilialVendedor)
+    If oVendedor:cError != ""
+        Conout("Erro ao deletar vendedor: " + oVendedor:cError + CRLF)
+        Return
+    EndIf
+    Conout("Vendedor deletado com sucesso!" + CRLF)
 
 Return
